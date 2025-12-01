@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproduciendo {{ video_file }}</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        video {
+            max-width: 90%;
+            max-height: 80vh;
+            border: 1px solid #333;
+            background-color: black;
+        }
+        h1 {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .navigation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .nav-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #d12424;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .back-button:hover {
+            background-color: #b30000;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <h1>Reproduciendo: Capitulo {{ video_file.split('/')[-1].replace('.mp4', '').replace('.', ' ').title().split('_')[1] }}</h1>
+
+    
+    <video id="videoPlayer" controls autoplay>
+        <source src="/video/{{ video_file }}" type="video/mp4">
+        Tu navegador no soporta el tag de video.
+    </video>
+    
+    <div class="navigation-buttons">
+        <button class="nav-button" onclick="navegarCapitulo('anterior')">← Capítulo Anterior</button>
+        <button class="nav-button" onclick="pantallaCompleta()">🔳 Pantalla Completa</button>
+        <button class="nav-button" onclick="navegarCapitulo('siguiente')">Capítulo Siguiente →</button>
+    </div>
+    
+    <a href="/" class="back-button">Volver a la lista de películas</a>
+
+    <script>
+        function navegarCapitulo(direccion) {
+            // Capturar URL actual
+            const urlActual = window.location.href;
+            
+            // Convertir a string y buscar .mp4
+            const urlString = urlActual.toString();
+            const mp4Index = urlString.indexOf('.mp4');
+            
+            if (mp4Index === -1) return; // No se encontró .mp4
+            
+            // Buscar el último _ antes de .mp4
+            const parteAntesMp4 = urlString.substring(0, mp4Index);
+            const ultimoGuionIndex = parteAntesMp4.lastIndexOf('_');
+            
+            if (ultimoGuionIndex === -1) return; // No se encontró _
+            
+            // Extraer número del capítulo
+            const numeroCapitulo = parseInt(parteAntesMp4.substring(ultimoGuionIndex + 1));
+            
+            if (isNaN(numeroCapitulo)) return; // No es un número válido
+            
+            let nuevoNumero;
+            
+            if (direccion === 'anterior') {
+                if (numeroCapitulo <= 1) {
+                    alert('Ya estás en el primer capítulo');
+                    return;
+                }
+                nuevoNumero = numeroCapitulo - 1;
+            } else if (direccion === 'siguiente') {
+                nuevoNumero = numeroCapitulo + 1;
+            }
+            
+            // Construir nueva URL
+            const nuevaUrl = parteAntesMp4.substring(0, ultimoGuionIndex + 1) + nuevoNumero + '.mp4';
+            
+            // Navegar a la nueva URL
+            window.location.href = nuevaUrl;
+        }
+
+        function pantallaCompleta() {
+            const video = document.getElementById('videoPlayer');
+            
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.mozRequestFullScreen) { 
+                video.mozRequestFullScreen();
+            } else if (video.webkitRequestFullscreen) { 
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { 
+                video.msRequestFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>
