@@ -1,6 +1,6 @@
 from flask import Flask, send_from_directory, jsonify, render_template
 from flask_cors import CORS
-from models.moviesData import ObtenerDataAnime , ObtenerDataPeli
+from models.moviesData import ObtenerDataAnime , ObtenerDataPeli, ObtenerDataSeries
 import os
 
 app = Flask(__name__, static_folder="static", static_url_path="")
@@ -24,6 +24,12 @@ def get_data_anime():
 def get_data_pelicula():
     result = ObtenerDataPeli()
     #print("Data fetched for peliculas:", result)
+    return jsonify(result)
+
+@app.route("/api/data/series")
+def get_data_series():
+    result = ObtenerDataSeries()
+    #print("Data fetched for series:", result)
     return jsonify(result)
 
 @app.route('/images/<path:filename>')

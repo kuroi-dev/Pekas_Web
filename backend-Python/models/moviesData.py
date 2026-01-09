@@ -164,5 +164,87 @@ def ObtenerDataPeli():
     #print(json.dumps(json_result_peliculas, indent=4, ensure_ascii=False))
     return json_result_peliculas
 
-def ObtenerDataSerie():
-    print("ObtenerDataSerie called")
+json_result_series = {
+    "series": {}
+}
+
+
+def ObtenerDataSeries():
+    series_path = os.path.join(folder_path, "series")
+    if os.path.exists(series_path):
+        # Primero obtener todas las series (carpetas nivel 1)
+        series_folders = [d for d in os.listdir(series_path) if os.path.isdir(os.path.join(series_path, d))]
+        
+        for series_name in series_folders:
+            series_folder_path = os.path.join(series_path, series_name)
+            
+            # Buscar logo principal del anime en Y:\imgs
+            logo_principal = None
+            for ext in ['.png', '.jpg', '.jpeg']:
+                logo_filename = f"{series_name}_logo{ext}"
+                logo_path = os.path.join(images_path, logo_filename)
+                if os.path.exists(logo_path):
+                    logo_principal = logo_filename
+                    break
+            
+            # Inicializar estructura del anime
+            json_result_series["series"][series_name] = {
+                "logo_principal": logo_principal,
+                "temporadas": {}
+            }
+            
+            # Buscar temporadas (carpetas nivel 2)
+            temporada_folders = [d for d in os.listdir(series_folder_path) 
+                               if os.path.isdir(os.path.join(series_folder_path, d))]
+            
+            for temporada_name in temporada_folders:
+                temporada_path = os.path.join(series_folder_path, temporada_name)
+                
+                # Buscar logo de la temporada en Y:\imgs
+                logo_temporada = None
+                for ext in ['.png', '.jpg', '.jpeg']:
+                    logo_filename = f"{series_name}_tem{temporada_name[-1]}{ext}"  # Obtiene último carácter del nombre
+                    logo_path = os.path.join(images_path, logo_filename)
+                    if os.path.exists(logo_path):
+                        logo_temporada = logo_filename
+                        break
+                
+                # Obtener capítulos (archivos .mp4)
+                capitulos = []
+                files = [f for f in os.listdir(temporada_path) 
+                        if f.lower().endswith('.mp4')]
+                
+                # Función para extraer el número del archivo
+                def extraer_numero(filename):
+                    # Buscar el patrón _número.mp4
+                    match = re.search(r'_(\d+)\.mp4$', filename, re.IGNORECASE)
+                    if match:
+                        return int(match.group(1))
+                    return 999999  # Si no encuentra número, poner al final
+                
+                # Ordenar archivos por el número extraído
+                files.sort(key=extraer_numero)
+                
+                for file in files:
+                    # Extraer el número del capítulo del nombre del archivo
+                    numero_capitulo = extraer_numero(file)
+                    
+                    # URL donde Flask servirá el capítulo
+                    capitulo_url = f"/play/series/{series_name}/{temporada_name}/{file}"
+                    
+                    capitulos.append({
+                        "numero": numero_capitulo,
+                        "titulo": f"Capítulo {numero_capitulo}",
+                        "url": capitulo_url,
+                        "archivo": file
+                    })
+                
+                # Agregar temporada al anime
+                if capitulos:  # Solo agregar si tiene capítulos
+                    json_result_series["series"][series_name]["temporadas"][temporada_name] = {
+                        "logo_temporada": logo_temporada,
+                        "capitulos": capitulos
+                    }
+    
+    #print(json.dumps(json_result_anime, indent=4, ensure_ascii=False))
+    return json_result_anime
