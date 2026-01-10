@@ -172,11 +172,15 @@ json_result_series = {
 def ObtenerDataSeries():
     series_path = os.path.join(folder_path, "series")
     if os.path.exists(series_path):
+
+        
         # Primero obtener todas las series (carpetas nivel 1)
         series_folders = [d for d in os.listdir(series_path) if os.path.isdir(os.path.join(series_path, d))]
         
         for series_name in series_folders:
             series_folder_path = os.path.join(series_path, series_name)
+
+            print(series_folder_path)
             
             # Buscar logo principal del anime en Y:\imgs
             logo_principal = None
@@ -200,6 +204,7 @@ def ObtenerDataSeries():
             for temporada_name in temporada_folders:
                 temporada_path = os.path.join(series_folder_path, temporada_name)
                 
+                print(temporada_path)
                 # Buscar logo de la temporada en Y:\imgs
                 logo_temporada = None
                 for ext in ['.png', '.jpg', '.jpeg']:
@@ -213,6 +218,8 @@ def ObtenerDataSeries():
                 capitulos = []
                 files = [f for f in os.listdir(temporada_path) 
                         if f.lower().endswith('.mp4')]
+                
+                print(files)
                 
                 # Función para extraer el número del archivo
                 def extraer_numero(filename):
@@ -228,6 +235,8 @@ def ObtenerDataSeries():
                 for file in files:
                     # Extraer el número del capítulo del nombre del archivo
                     numero_capitulo = extraer_numero(file)
+
+                    print(numero_capitulo)
                     
                     # URL donde Flask servirá el capítulo
                     capitulo_url = f"/play/series/{series_name}/{temporada_name}/{file}"
@@ -238,6 +247,8 @@ def ObtenerDataSeries():
                         "url": capitulo_url,
                         "archivo": file
                     })
+
+                    print(capitulos)
                 
                 # Agregar temporada al anime
                 if capitulos:  # Solo agregar si tiene capítulos
@@ -247,4 +258,4 @@ def ObtenerDataSeries():
                     }
     
     #print(json.dumps(json_result_anime, indent=4, ensure_ascii=False))
-    return json_result_anime
+    return json_result_series

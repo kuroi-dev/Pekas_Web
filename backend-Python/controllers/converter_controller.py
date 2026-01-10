@@ -61,11 +61,11 @@ def convert_mkv_to_mp4(input_file_path, output_file_path):
 if __name__ == "__main__":
     # Define la ruta del archivo MKV de entrada
     # Asegúrate de que esta ruta sea correcta en tu sistema
-    input = 'Y:/series/pluribus/plr_1.mkv' 
+    input = 'Y:/series/pluribus/temporada_1/plr_1.mkv' 
     
     # Define la ruta para el archivo MP4 de salida
     # Puedes cambiar el nombre del archivo de salida si lo deseas
-    output_mp4 = 'Y:/series/pluribus/plr_1.mp4' 
+    output_mp4 = 'Y:/series/pluribus/temporada_1/plr_1.mp4' 
     # Asegúrate de que la carpeta de salida exista
     output_dir = os.path.dirname(output_mp4)
     if not os.path.exists(output_dir):

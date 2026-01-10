@@ -29,7 +29,7 @@ def get_data_pelicula():
 @app.route("/api/data/series")
 def get_data_series():
     result = ObtenerDataSeries()
-    #print("Data fetched for series:", result)
+    print("Data fetched for series:", result)
     return jsonify(result)
 
 @app.route('/images/<path:filename>')
