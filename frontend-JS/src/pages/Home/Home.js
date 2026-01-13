@@ -32,6 +32,7 @@ function Home() {
   const handleAnimeClick = () => {
     navigate('/anime');
     fecthBack('anime');
+    print('Anime data fetched and stored.');
   };
 
   const handlePeliculasClick = () => {
